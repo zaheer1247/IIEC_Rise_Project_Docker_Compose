@@ -1,0 +1,52 @@
+# SilverPeas with PostGreSQL
+# 
+# Access via "http://localhost:8080/silverpeas
+# login username: SilverAdmin
+# login password: SilverAdmin
+
+
+version: '3'
+services:
+  silverpeas:
+    image: silverpeas
+    networks:
+      - silverpeas_network
+    container_name: silverpeas
+    restart: always
+    ports:
+      - 8080:8000
+    links:
+      - postgresql:database
+    depends_on:
+      - postgresql
+    environment:
+      DB_SERVER: database
+      DB_NAME: 'Silverpeas'
+      DB_USER: silverpeas
+      DB_PASSWORD: thesilverpeaspassword
+    volumes:
+      - silverpeas-log:/opt/silverpeas/log 
+      - silverpeas-data:/opt/silverpeas/data 
+        
+
+  postgresql:
+    image: postgres:9.6
+    networks:
+      - silverpeas_network
+    container_name: postgresql
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: thesilverpeaspassword
+      POSTGRES_USER: silverpeas
+      POSTGRES_DB: 'Silverpeas'
+    volumes:
+      - postgresql-data:/var/lib/postgresql/data
+
+networks:
+  silverpeas_network:
+    driver: bridge
+
+volumes:
+  postgresql-data:      
+  silverpeas-log:
+  silverpeas-data:
